@@ -1,18 +1,19 @@
-import AsyncStorage from "@react-native-async-storage/async-storage"
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const storeData = async (key: string, value: string) => {
-    try {
-        await AsyncStorage.setItem(key, value);
-    } catch (error) {
-        console.log('Error storage value: ', error);
-    }
-}
+export const saveCityName = async (cityName: string) => {
+  try {
+    await AsyncStorage.setItem("cityName", cityName);
+  } catch (error) {
+    console.log("Failed to save the city name to storage", error);
+  }
+};
 
-export const getData = async (key: string) => {
-    try {
-        const value = await AsyncStorage.getItem(key);
-        return value;
-    } catch (error) {
-        console.log('Error retrieving value: ', error);
-    }
-}
+export const getCityName = async (): Promise<string | null> => {
+  try {
+    const cityName = await AsyncStorage.getItem("cityName");
+    return cityName;
+  } catch (error) {
+    console.log("Failed to fetch the city name from storage", error);
+    return null;
+  }
+};

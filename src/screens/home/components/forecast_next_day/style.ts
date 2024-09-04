@@ -1,4 +1,4 @@
-import {StyleSheet} from "react-native";
+import {Dimensions, StyleSheet} from "react-native";
 const  styles = StyleSheet.create({
     nextDayContainer: {
       marginBottom: 8,
@@ -21,6 +21,7 @@ const  styles = StyleSheet.create({
       borderRadius: 24,
       backgroundColor: "rgba(255,255,255, 0.15)",
       padding: 16,
+      width: Dimensions.get("window").width * 0.2,
     },
   });
 

@@ -1,7 +1,7 @@
 import { ImageSourcePropType } from "react-native";
 import AssetsImage from "../../assets/Images";
 
-export const apiKey = "YOUR_API_KEY";
+export const apiKey = "d6776e39d0704d9ba7335918241908";
 
 export const weatherImages: { [keyImage: string]: ImageSourcePropType } = {
     
