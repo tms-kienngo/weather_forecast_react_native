@@ -1,70 +1,82 @@
-import { View, StyleSheet, Image, Text, ScrollView } from "react-native";
+import { View, StyleSheet, Text, Dimensions, Image } from "react-native";
+import { LineChart } from "react-native-chart-kit";
+import React, { useState, useEffect, useCallback } from "react";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { Appbar } from "react-native-paper";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import * as React from "react";
-import UVIndicator from "./components/UVIndicator";
-import { RouteProp, useNavigation } from "@react-navigation/native";
-import { DateTimeHelper } from "../../utils/date_helper";
+import AssetsImage from "../../../assets/Images";
+import { Compass } from "./components/compass";
 
-interface WeatherDetailProps {
-  hour: Hour[];
+export type WeatherDetailParam = {
+  hour: Hour[],
+  wind_dir: number,
 }
-const WeatherDetailScreen = ({ route }) => {
+
+
+const WeatherDetailScreen = () => {
+  const route = useRoute();
   const navigation = useNavigation();
+  const param = route.params as WeatherDetailParam;
+  const hour = param.hour;
+  const [tempc, setTempc] = useState<number[] | []>([]);
 
+
+  useEffect(() => {
+    if (hour.length > 0) {
+      const temp: number[] = [];
+      for (let i = 0; i < hour.length; i++) {
+        temp.push(hour[i].temp_c);
+      }
+      setTempc(temp);
+    }
+
+  }, []);
   return (
-    <SafeAreaProvider>
-      <View style={styles.container}>
-        <Appbar.Header statusBarHeight={40}>
-          <Appbar.BackAction
-            onPress={() => {
-              navigation.goBack();
+    <View style={styles.container}>
+      <Image
+        blurRadius={70}
+        source={AssetsImage.imgBackground}
+        style={styles.imageBackground}
+      />
+      <Appbar.Header>
+        <Appbar.BackAction onPress={() => navigation.goBack()} />
+        <Appbar.Content title='' />
+      </Appbar.Header>
+      <View style={{ flex: 1, alignContent: "center", padding: 16, }}>
+        {
+          tempc.length > 0 ? <LineChart
+            data={{
+              labels: [],
+              datasets: [
+                {
+                  data: tempc
+                }
+              ],
             }}
-          />
-        </Appbar.Header>
-        <ScrollView>
-          {route.hour.map((h: Hour, index: number) => {
-            const time = DateTimeHelper.convertToLocalTime(h?.time);
-            const image = h.condition?.icon;
-            return (
-              <View key={index} style={styles.containerHour}>
-                <Image
-                  blurRadius={70}
-                  source={require("../../../assets/images/bg.png")}
-                  style={styles.imageBackground}
-                />
-                <View
-                  style={{
-                    padding: 12,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text
-                    style={{ color: "white", fontWeight: 500, fontSize: 20 }}
-                  >
-                    {time}
-                  </Text>
+            width={(Dimensions.get("window").width) - 32}
+            height={(Dimensions.get("window").height) / 4}
 
-                  <Image
-                    source={{ uri: "https:" + { image } }}
-                    style={{ width: 64, height: 64 }}
-                  />
+            yAxisInterval={1}
+            style={{ borderRadius: 16 }}
+            chartConfig={{
 
-                  <Text
-                    style={{ color: "white", fontWeight: 600, fontSize: 24 }}
-                  >
-                    {h.temp_c}&#176;
-                  </Text>
-
-                  {/* <UVIndicator uvIndex={h.uv} /> */}
-                </View>
-              </View>
-            );
-          })}
-        </ScrollView>
+              backgroundColor: "#e26a00",
+              backgroundGradientFrom: "#fb8c00",
+              backgroundGradientTo: "#ffa726",
+              decimalPlaces: 0,
+              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              propsForDots: {
+                r: "0",
+                strokeWidth: "2",
+                stroke: "#ffa726"
+              }
+            }}
+            bezier
+          /> : null
+        }
+        <Compass windDir={param.wind_dir} />
       </View>
-    </SafeAreaProvider>
+
+    </View>
   );
 };
 

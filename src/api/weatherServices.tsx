@@ -1,14 +1,18 @@
 import axios from "axios";
 import { apiKey } from "../constants";
+import weather from "../../assets/data/weather.json";
 
 const forecastEndpoint = (cityName: string, day: number) =>
   `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${cityName}&days=${day}&aqi=no&alerts=no`;
 const locationEndPoint = (cityName: string) =>
   `https://api.weatherapi.com/v1/search.json?key=${apiKey}&q=${cityName}`;
 
+interface FetchWeatherParams {
+  cityName: string;
+  day: number;
+}
 export const fetchWeatherForecast = async (
-  cityName: string,
-  day: number
+  { cityName, day }: FetchWeatherParams
 ): Promise<Weather | null> => {
   const options = {
     method: "get",
@@ -25,7 +29,7 @@ export const fetchWeatherForecast = async (
   }
 };
 
-export const fetchLocation = async (cityName: string): Promise<LocationSearch[] | []> => {
+export const getLocations = async (cityName: string): Promise<LocationSearch[] | []> => {
   const options = {
     method: "get",
     url: locationEndPoint(cityName),
@@ -33,7 +37,6 @@ export const fetchLocation = async (cityName: string): Promise<LocationSearch[] 
 
   try {
     const response = await axios.request(options);
-    console.log(response.data);
     return response.data as LocationSearch[];
   } catch (error) {
     return [];

@@ -4,11 +4,12 @@ import { weatherImages } from "../../../../constants";
 import { DateTimeHelper } from "../../../../utils/date_helper";
 import { useNavigation } from "@react-navigation/native";
 import styles from "./style";
-import { useEffect, useState } from "react";
+import { WeatherDetailParam } from "../../../weather_detail/WeatherDetailScreen";
 
 type ForecastNextDayProps = {
-  forecastDays: ForecastDay[];
-};
+  forecastDays: ForecastDay[],
+  wind_dir: number,
+}
 const ForecastNextDay = (props: ForecastNextDayProps) => {
   const navigation = useNavigation();
   return (
@@ -24,8 +25,13 @@ const ForecastNextDay = (props: ForecastNextDayProps) => {
       >
         {props?.forecastDays?.map((item, index) => {
           let dayName = DateTimeHelper.convertDateToShortFormat(item.date);
+          const params: WeatherDetailParam = {
+            hour: item.hour,
+            wind_dir: props.wind_dir,
+          };
+
           return (
-            <TouchableOpacity key={index} onPress={() => {}}>
+            <TouchableOpacity key={index} onPress={() => navigation.navigate('Detail', params)}>
               <View
                 style={[
                   styles.nextDayComponent,

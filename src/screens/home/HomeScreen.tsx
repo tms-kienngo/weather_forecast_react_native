@@ -1,97 +1,73 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { View, Image, SafeAreaView } from "react-native";
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, ImageSourcePropType } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchWeather } from '../../store/weatherSlice';
+import { AppDispatch, RootState } from '../../store';
+import { globalStyles } from '../../styles';
+import AssetsImage from '../../../assets/Images';
 import * as Progress from "react-native-progress";
-import SearchComponents from "./components/search_component/SearchComponent";
-import ForecastComponents from "./components/forecast_component/ForecastComponent";
-import ForecastNextDay from "./components/forecast_next_day/ForecastNextDay";
-import { fetchLocation, fetchWeatherForecast } from "../../api/weather";
-import { debounce } from "lodash";
-import { weatherImages } from "../../constants";
-import { getData, storeData } from "../../utils/ansynStorage";
-import { useNavigation } from "@react-navigation/native";
-import AssetsImage from "../../../assets/Images";
-import styles from "./style";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import ForecastComponents from './components/forecast_component/ForecastComponent';
+import ForecastNextDay from './components/forecast_next_day/ForecastNextDay';
+import { getCityName } from '../../utils/ansynStorage';
+import SearchComponent from './components/search_component/SearchComponent';
 
 const HomeScreen = () => {
-  const [loading, setLoading] = useState(false);
-  const [showSearch, toggleSearch] = useState(false);
-  const [locations, setLocations] = useState<LocationSearch[] | []>([]);
-  const [weather, setWeather] = useState<Weather | null>(null);
-  const handleLocation = (loc: LocationSearch) => {
-    toggleSearch(false);
-    setLoading(true);
-    setLocations([]);
-    console.log('SELECTED LOCATION', loc);
-    fetchWeatherForecast(loc.name, 7).then((data) => {
-      setWeather(data);
-      setLoading(false);
-      storeData("city", loc.name);
-    });
-  };
-  const handleSearch = (value: string) => {
-    if (value.length > 2) {
-      fetchLocation(value).then((data) => {
-        if (data != null) {
-          setLocations(data);
-          console.log('LOCATIONS', data);
-        }
-      });
+  const dispatch: AppDispatch = useDispatch();
+  const { weather, loading, error } = useSelector((state: RootState) => state.weather);
+  const [city, setCity] = useState<string>('Hanoi');
+
+  const loadCityName = async () => {
+    const storedCityName = await getCityName();
+    if (storedCityName) {
+      setCity(storedCityName);
+      dispatch(fetchWeather({ cityName: storedCityName, day: 7 }));
+    } else {
+      dispatch(fetchWeather({ cityName: city, day: 7 }));
     }
   };
-
   useEffect(() => {
-    fetchMyWeatherData();
-  }, []);
+    loadCityName();
+  }, [dispatch]);
 
-  const fetchMyWeatherData = async () => {
-    let myCity = await getData("city");
-    let cityName = "Ha Noi";
-    if (myCity) cityName = myCity;
-    fetchWeatherForecast(cityName, 7).then((data) => {
-      setWeather(data);
-      setLoading(false);
-    });
-  };
 
-  const handelTextDebounce = useCallback(debounce(handleSearch, 1200), []);
-  const { current, location } = weather ? weather : {};
+  const forecastProps = {
+    city: weather?.location?.name,
+    country: weather?.location?.country,
+    image: { uri: `https:${weather?.current.condition.icon}` } as ImageSourcePropType,
+    tempc: weather?.current.temp_c,
+    description: weather?.current.condition.text,
+    wind: weather?.current.wind_kph,
+    humidity: weather?.current.humidity,
+    time: weather?.location.localtime,
+
+  }
+  const forecastNextDayProps = {
+    forecastDays: weather?.forecast?.forecastday ?? [],
+    wind_dir: weather?.current?.wind_kph ?? 0
+
+  }
   return (
-    <View style={styles.container}>
+    <View style={globalStyles.container}>
       <Image
         blurRadius={70}
         source={AssetsImage.imgBackground}
-        style={styles.imageBackground}
+        style={globalStyles.imageBackground}
       />
       {loading ? (
-        <View style={styles.containerLoading}>
+        <View style={globalStyles.containerLoading}>
           <Progress.CircleSnail thickness={2} size={40} />
         </View>
+      ) : error ? (
+        <Text>Error: {error}</Text>
       ) : (
-        <SafeAreaView style={styles.containerSafeArea}>
-          <SearchComponents
-            isShow={showSearch}
-            handleTextDebounce={handelTextDebounce}
-            searchAction={() => toggleSearch(!showSearch)}
-            locations={locations}
-            onLocationSelect={handleLocation}
-          />
-
-          <ForecastComponents
-            city={location?.name}
-            country={location?.country}
-            image={weatherImages[current?.condition?.text ?? ""]}
-            tempc={current?.temp_c}
-            description={current?.condition?.text}
-            wind={current?.wind_kph}
-            humidity={current?.humidity}
-            time={location?.localtime}
-          />
-
-          <ForecastNextDay
-            forecastDays={weather?.forecast?.forecastday ?? []}
-          />
+        <SafeAreaView style={globalStyles.container}>
+          <SearchComponent />
+          <ForecastComponents {...forecastProps} />
+          <ForecastNextDay {...forecastNextDayProps} />
         </SafeAreaView>
       )}
+
     </View>
   );
 };

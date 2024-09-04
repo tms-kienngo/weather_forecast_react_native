@@ -1,11 +1,15 @@
-import { useEffect } from "react";
-import SplashScreen from "react-native-splash-screen";
-import AppNavigation from "./src/navigation/appNavigation";
+import { Provider } from "react-redux";
+import store from "./src/store";
+import HomeScreen from "./src/screens/home/HomeScreen";
+import AppNavigation from "./src/navigation/Navigation";
+
+
 
 export default function App() {
-  useEffect(() => {
-    SplashScreen.hide();
-  }, []);
-  return <AppNavigation />;
 
+  return (
+    <Provider store={store}>
+      <AppNavigation />
+    </Provider>
+  );
 }
