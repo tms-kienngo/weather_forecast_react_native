@@ -14,19 +14,20 @@ interface FetchWeatherParams {
 export const fetchWeatherForecast = async (
   { cityName, day }: FetchWeatherParams
 ): Promise<Weather | null> => {
-  const options = {
-    method: "get",
-    url: forecastEndpoint(cityName, day),
-  };
-  console.log(options);
-  try {
-    const response = await axios.request(options);
-    console.log('weather', response.data);
-    return response.data as Weather;
-  } catch (error) {
-    console.log(error);
-    return null;
-  }
+  // const options = {
+  //   method: "get",
+  //   url: forecastEndpoint(cityName, day),
+  // };
+  // console.log(options);
+  // try {
+  //   const response = await axios.request(options);
+  //   console.log('weather', response.data);
+  //   return response.data as Weather;
+  // } catch (error) {
+  //   console.log(error);
+  //   return null;
+  // }
+  return weather;
 };
 
 export const getLocations = async (cityName: string): Promise<LocationSearch[] | []> => {

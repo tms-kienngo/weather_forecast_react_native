@@ -11,12 +11,13 @@ import ForecastComponents from './components/forecast_component/ForecastComponen
 import ForecastNextDay from './components/forecast_next_day/ForecastNextDay';
 import { getCityName } from '../../utils/ansynStorage';
 import SearchComponent from './components/search_component/SearchComponent';
+import { useTheme } from '@react-navigation/native';
+
 
 const HomeScreen = () => {
   const dispatch: AppDispatch = useDispatch();
   const { weather, loading, error } = useSelector((state: RootState) => state.weather);
   const [city, setCity] = useState<string>('Hanoi');
-
   const loadCityName = async () => {
     const storedCityName = await getCityName();
     if (storedCityName) {
@@ -26,6 +27,7 @@ const HomeScreen = () => {
       dispatch(fetchWeather({ cityName: city, day: 7 }));
     }
   };
+  const theme = useTheme();
   useEffect(() => {
     loadCityName();
   }, [dispatch]);
@@ -40,20 +42,16 @@ const HomeScreen = () => {
     wind: weather?.current.wind_kph,
     humidity: weather?.current.humidity,
     time: weather?.location.localtime,
-
+    theme: theme,
   }
   const forecastNextDayProps = {
     forecastDays: weather?.forecast?.forecastday ?? [],
-    wind_dir: weather?.current?.wind_kph ?? 0
+    wind_dir: weather?.current?.wind_kph ?? 0,
+    theme: theme,
 
   }
   return (
     <View style={globalStyles.container}>
-      <Image
-        blurRadius={70}
-        source={AssetsImage.imgBackground}
-        style={globalStyles.imageBackground}
-      />
       {loading ? (
         <View style={globalStyles.containerLoading}>
           <Progress.CircleSnail thickness={2} size={40} />

@@ -2,6 +2,7 @@ import { View, Text, Image, ImageSourcePropType } from "react-native";
 import styles from "./style";
 import AssetsImage from "../../../../../assets/Images";
 import { DateTimeHelper } from "../../../../utils/date_helper";
+import { Theme } from "@react-navigation/native";
 
 type ForecastProps = {
   city?: string;
@@ -12,14 +13,17 @@ type ForecastProps = {
   wind?: number;
   humidity?: number;
   time?: string;
+  theme: Theme;
 };
 const ForecastComponents = (props: ForecastProps) => {
   return (
     <View style={styles.forecastContainer}>
       {/**Locations */}
-      <Text style={styles.location}>
+      <Text style={[styles.location, {
+        color: props.theme.colors.text,
+      },]}>
         {props.city}
-        <Text style={styles.country}>, {props?.country}</Text>
+        <Text style={[styles.country, { color: props.theme.colors.text, },]}>, {props?.country}</Text>
       </Text>
       {/**Weather image */}
       <View style={styles.currentLocationImageContainer}>
@@ -27,24 +31,32 @@ const ForecastComponents = (props: ForecastProps) => {
       </View>
       {/**Degree celcius */}
       <View style={styles.degreeContainer}>
-        <Text style={styles.tempc}>{props.tempc}&#176;</Text>
-        <Text style={styles.description}>{props.description}</Text>
+        <Text style={[styles.tempc, {
+          color: props.theme.colors.text,
+        }]}>{props.tempc}&#176;</Text>
+        <Text style={[styles.description, { color: props.theme.colors.text, }]}>{props.description}</Text>
       </View>
       {/** Other stats */}
       <View style={styles.otherStatsContainer}>
         <View style={styles.otherStatsDetailContainer}>
-          <Image source={AssetsImage.iconWind} style={styles.otherStatsImage} />
-          <Text style={styles.otherStatsValue}>{props.wind}km</Text>
+          <Image source={AssetsImage.iconWind} style={[styles.otherStatsImage, {
+            tintColor: props.theme.colors.text,
+          }]} />
+          <Text style={[styles.otherStatsValue, { color: props.theme.colors.text, }]}>{props.wind}km</Text>
         </View>
         <View style={styles.otherStatsDetailContainer}>
-          <Image source={AssetsImage.iconDrop} style={styles.otherStatsImage} />
-          <Text style={styles.otherStatsValue}>{props.humidity}%</Text>
+          <Image source={AssetsImage.iconDrop} style={[styles.otherStatsImage, {
+            tintColor: props.theme.colors.text,
+          }]} />
+          <Text style={[styles.otherStatsValue, { color: props.theme.colors.text, }]}>{props.humidity}%</Text>
         </View>
         <View style={styles.otherStatsDetailContainer}>
-          <Image source={AssetsImage.iconSun} style={styles.otherStatsImage} />
+          <Image source={AssetsImage.iconSun} style={[styles.otherStatsImage, {
+            tintColor: props.theme.colors.text,
+          }]} />
           {
             props.time != null ? (
-              <Text style={styles.otherStatsValue}>{DateTimeHelper.convertToLocalTime(props?.time ?? "")}</Text>
+              <Text style={[styles.otherStatsValue, { color: props.theme.colors.text, }]}>{DateTimeHelper.convertToLocalTime(props?.time ?? "")}</Text>
             ) : null
           }
         </View>
