@@ -15,7 +15,7 @@ const SearchComponent = () => {
   const { locations, loading } = useSelector((state: RootState) => state.search);
 
   const handleSearch = () => {
-    if (query.trim().length > 0) {
+    if (query.trim().length > 2) {
       dispatch(fetchLocations({ query }));
     }
   };

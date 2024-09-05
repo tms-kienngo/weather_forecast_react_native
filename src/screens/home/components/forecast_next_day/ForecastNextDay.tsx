@@ -1,22 +1,23 @@
 import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
 import { CalendarDaysIcon } from "react-native-heroicons/outline";
-import { weatherImages } from "../../../../constants";
 import { DateTimeHelper } from "../../../../utils/date_helper";
-import { useNavigation } from "@react-navigation/native";
+import { Theme, useNavigation } from "@react-navigation/native";
 import styles from "./style";
 import { WeatherDetailParam } from "../../../weather_detail/WeatherDetailScreen";
 
 type ForecastNextDayProps = {
   forecastDays: ForecastDay[],
   wind_dir: number,
+  theme: Theme,
 }
 const ForecastNextDay = (props: ForecastNextDayProps) => {
-  const navigation = useNavigation();
   return (
     <View style={styles.nextDayContainer}>
       <View style={styles.calendarContainer}>
-        <CalendarDaysIcon size={22} color="white" />
-        <Text style={styles.calendarText}>Daily forecast</Text>
+        <CalendarDaysIcon size={22} color={props.theme.colors.text} />
+        <Text style={[styles.calendarText, {
+          color: props.theme.colors.text,
+        }]}>Daily forecast</Text>
       </View>
       <ScrollView
         horizontal
@@ -31,21 +32,24 @@ const ForecastNextDay = (props: ForecastNextDayProps) => {
           };
 
           return (
-            <TouchableOpacity key={index} onPress={() => navigation.navigate('Detail', params)}>
+            <TouchableOpacity key={index} onPress={() => { }}>
               <View
                 style={[
                   styles.nextDayComponent,
-                  { marginLeft: index == 0 ? 0 : 12 },
+                  {
+                    marginLeft: index == 0 ? 0 : 12,
+                    backgroundColor: props.theme.colors.card,
+                  },
                 ]}
               >
                 <Image
                   source={{ uri: "https:" + item.day.condition.icon }}
                   style={{ width: 24, height: 24, marginBottom: 4 }}
                 />
-                <Text style={{ color: "white", marginBottom: 4 }}>
+                <Text style={{ color: props.theme.colors.text, marginBottom: 4 }}>
                   {dayName}
                 </Text>
-                <Text style={{ color: "white", fontSize: 16, fontWeight: 600 }}>
+                <Text style={{ color: props.theme.colors.text, fontSize: 16, fontWeight: 600 }}>
                   {item?.day?.avgtemp_c}&#176;
                 </Text>
               </View>
@@ -53,7 +57,7 @@ const ForecastNextDay = (props: ForecastNextDayProps) => {
           );
         })}
       </ScrollView>
-    </View>
+    </View >
   );
 };
 

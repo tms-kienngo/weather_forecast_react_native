@@ -11,6 +11,7 @@ interface LocationState {
     locations: LocationSearch[];
 }
 
-
-
+interface ThemeState {
+    darkMode: boolean;
+}
 
