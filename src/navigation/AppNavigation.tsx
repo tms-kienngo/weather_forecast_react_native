@@ -6,9 +6,10 @@ import SettingScreen from '../screens/settings/SettingScreen';
 import { Ionicons } from "@expo/vector-icons";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import WeatherDetailScreen from '../screens/weather_detail/WeatherDetailScreen';
+import { RootStackParamList } from '../types';
 
 const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function WeatherStack() {
   return (

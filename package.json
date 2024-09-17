@@ -20,7 +20,6 @@
     "expo-status-bar": "~1.12.1",
     "ionicons": "^7.4.0",
     "lodash": "^4.17.21",
-    "nativewind": "^2.0.11",
     "react": "18.2.0",
     "react-native": "0.74.5",
     "react-native-chart-kit": "^6.12.0",
