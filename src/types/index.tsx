@@ -1,3 +1,4 @@
+import { WeatherDetailParam } from "../screens/weather_detail/WeatherDetailScreen";
 
 interface WeatherState {
     loading: boolean;
@@ -15,3 +16,7 @@ interface ThemeState {
     darkMode: boolean;
 }
 
+export type RootStackParamList = {
+    Home: undefined;
+    WeatherDetail: WeatherDetailParam;
+}

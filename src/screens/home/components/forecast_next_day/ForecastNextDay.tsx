@@ -1,8 +1,9 @@
 import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
 import { CalendarDaysIcon } from "react-native-heroicons/outline";
 import { DateTimeHelper } from "../../../../utils/date_helper";
-import { Theme, useNavigation } from "@react-navigation/native";
+import { NavigationProp, Theme, useNavigation } from "@react-navigation/native";
 import styles from "./style";
+import { RootStackParamList } from "../../../../types";
 import { WeatherDetailParam } from "../../../weather_detail/WeatherDetailScreen";
 
 type ForecastNextDayProps = {
@@ -10,7 +11,10 @@ type ForecastNextDayProps = {
   wind_dir: number,
   theme: Theme,
 }
+
+type WeatherDetailNavigationProp = NavigationProp<RootStackParamList, 'WeatherDetail'>;
 const ForecastNextDay = (props: ForecastNextDayProps) => {
+  const navigation = useNavigation<WeatherDetailNavigationProp>();
   return (
     <View style={styles.nextDayContainer}>
       <View style={styles.calendarContainer}>
@@ -26,13 +30,15 @@ const ForecastNextDay = (props: ForecastNextDayProps) => {
       >
         {props?.forecastDays?.map((item, index) => {
           let dayName = DateTimeHelper.convertDateToShortFormat(item.date);
+
           const params: WeatherDetailParam = {
             hour: item.hour,
             wind_dir: props.wind_dir,
           };
-
           return (
-            <TouchableOpacity key={index} onPress={() => { }}>
+            <TouchableOpacity key={index} onPress={() => {
+              navigation.navigate('WeatherDetail', params);
+            }}>
               <View
                 style={[
                   styles.nextDayComponent,
